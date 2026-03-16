@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adboard — Retroplanning · DEMO_Campagne_2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --c-green:     #00b299;
+      --c-dgreen:    #008f7a;
+      --c-palegreen: #d2f0eb;
+      --c-blue:      #455378;
+      --c-dblue:     #0F2A48;
+      --c-orange:    #fecf4d;
+      --c-red:       #dd4d4d;
+      --c-gray:      #8A9099;
+      --c-ooh:       #FFCF54;
+      --c-dooh:      #455378;
+      --c-prog:      #5b9bd5;
+      --c-social:    #7c5cbf;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: Poppins, sans-serif; background: #f0f2f5; color: var(--c-dblue); margin: 0; font-size: 14px; }
+    a { color: var(--c-green); text-decoration: none; }
+
+    /* NAVBAR */
+    .navbar-wrap { background: white; border-bottom: 1px solid #e8e9eb; position: relative; height: 52px; }
+    .content-maxw-top { position: relative; max-width: 1350px; margin: 0 auto; padding-left: calc(108px + 17px); padding-right: 16px; height: 52px; display: flex; align-items: center; }
+    .navbar-logo { position: absolute; left: 0; top: 0; width: 108px; height: 100%; background: url("https://adboard.fr/_inc/res/adring/color-higher-res.png?v=2") center center no-repeat; background-size: contain; display: block; }
+    .navbar-buttons { list-style: none; margin: 0; padding: 0; display: inline-flex; align-items: center; white-space: nowrap; height: 100%; }
+    .tb-item { position: relative; display: inline-flex; align-items: center; height: 100%; padding: 0 16px; }
+    .tb-item a { color: var(--c-gray); font-size: 13px; display: flex; align-items: center; height: 100%; border-bottom: 2px solid transparent; transition: color 0.2s; }
+    .tb-item:hover a { color: var(--c-dblue); }
+    .tb-item.active a { color: var(--c-dblue); border-bottom-color: var(--c-green); font-weight: 600; }
+    .tb-label.material-icons { font-size: 18px; }
+    .v4-breadcrumb-wrap { position: absolute; bottom: -7px; left: 108px; background: white; z-index: 1; padding: 0 10px; }
+    .d-breadcrumb { float: left; white-space: nowrap; font-size: 11px; opacity: 0.3; transition: opacity 0.5s; padding-bottom: 2px; }
+    .d-breadcrumb:hover { opacity: 1; }
+    .d-breadcrumb-item { display: inline-block; }
+    .d-breadcrumb-item + .d-breadcrumb-item::before { content: ' › '; color: #aaa; margin: 0 3px; }
+    .d-breadcrumb-item.active { font-weight: 600; }
+
+    /* CONTENT */
+    .v4-content { position: relative; padding-top: 32px; color: var(--c-dblue); }
+    .content-maxw { position: relative; max-width: 1450px; margin: 0 auto; }
+    .v4-page-content { padding: 0 32px 48px; }
+
+    /* TITLE */
+    .autowidth2 { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+    .aw-title { overflow: hidden; flex: 1; }
+    .f-title-page { font-size: 22px; font-weight: 700; overflow: hidden; }
+    .title-ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .f-sm.text-pale { font-size: 12px; color: #aaa; padding-bottom: 24px; position: relative; z-index: 1; margin-bottom: -16px; }
+    .id-value.campaign-id { display: inline-block; background: #eef0f3; padding: 1px 7px; border-radius: 3px; font-size: 11px; cursor: pointer; }
+    .campaign-state { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 9px; border-radius: 10px; background: #d2f0eb; color: #0e7060; vertical-align: middle; margin-left: 8px; }
+
+    /* ACTIONS */
+    .rc-top-actions { position: relative; display: inline-block; }
+    .v4-btn-actions { background: white; border: 1px solid #dde0e8; border-radius: 4px; padding: 5px 10px; font-family: inherit; font-size: 13px; cursor: pointer; color: var(--c-dblue); display: inline-flex; align-items: center; gap: 4px; }
+    .v4-btn-actions .material-icons { font-size: 16px; color: var(--c-gray); }
+    .v4-popup-mini { display: none; position: absolute; right: 0; top: calc(100% + 6px); background: white; border-radius: 8px; box-shadow: 0 8px 16px -4px rgba(0,0,0,.25); z-index: 10000; min-width: 230px; padding: 6px 0; overflow: hidden; }
+    .v4-popup-mini.open { display: block; }
+    .pm-item { display: block; color: var(--c-dblue); padding: 6px 16px 6px calc(12px + 1.4em + 8px); font-size: 13px; position: relative; transition: background 0.1s; }
+    .pm-item:hover { background: #f5f7fa; }
+    .pm-item.text-red { color: var(--c-red); padding-bottom: 8px; margin-bottom: 4px; border-bottom: 1px solid #f0f0f0; }
+    .pm-item[data-icon]::before { content: attr(data-icon); font-family: 'Material Icons'; font-size: 15px; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--c-gray); line-height: 1; }
+    .pm-item.text-red[data-icon]::before { color: var(--c-red); }
+
+    /* TABS */
+    .page-tabs { position: relative; box-shadow: 0 1px 0 0 #e8e9eb; font-size: 0; margin-bottom: 24px; margin-top: 28px; }
+    .p-tab { position: relative; display: inline-block; margin-right: 28px; color: var(--c-gray); border-bottom: 2px solid transparent; font-size: 14px; vertical-align: middle; white-space: nowrap; cursor: pointer; transition: color .3s; padding-bottom: 2px; }
+    .p-tab:hover { color: var(--c-dblue); }
+    .p-tab.active { color: var(--c-green); border-bottom-color: var(--c-green); }
+    .p-tab.active .pt-title { font-weight: 600; }
+    .pt-title { display: inline-block; vertical-align: middle; }
+
+    /* V4-BLOCK */
+    .v4-block { position: relative; background: white; border-radius: 15px; box-shadow: 0 1px 4px rgba(0,0,0,.08); margin-bottom: 20px; overflow: hidden; }
+    .vb-header { position: relative; padding: 10px 20px; font-size: 0; background-color: var(--c-green); color: white; display: flex; align-items: center; justify-content: space-between; border-radius: 15px 15px 0 0; }
+    .vh-title { font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 7px; color: white; line-height: 1; }
+    .vh-title .material-icons { font-size: 15px; }
+    .vh-right { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+    .vb-content { position: relative; padding: 16px 20px; }
+
+    /* KPI TIMELINE */
+    .kpi-timeline { display: flex; align-items: stretch; margin-bottom: 24px; background: white; border-radius: 15px; box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden; }
+    .kpi-step { flex: 1; padding: 16px 14px 14px; position: relative; border-right: 1px solid #f0f2f5; display: flex; flex-direction: column; gap: 4px; }
+    .kpi-step:last-child { border-right: none; }
+    .kpi-step:not(:last-child)::after { content: ''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 10px solid #f0f2f5; z-index: 2; }
+    .kpi-step-num { font-size: 9px; font-weight: 700; color: #ccc; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 2px; }
+    .kpi-step-label { font-size: 10px; color: var(--c-gray); font-weight: 500; text-transform: uppercase; letter-spacing: .4px; line-height: 1.3; }
+    .kpi-step-date { font-size: 15px; font-weight: 700; line-height: 1.2; margin-top: 2px; }
+    .kpi-step-date.is-past   { color: var(--c-green); }
+    .kpi-step-date.is-future { color: var(--c-blue); }
+    .kpi-step-date.is-pending { color: #aaa; font-size: 12px; font-style: italic; font-weight: 400; }
+    .kpi-step-sub { font-size: 10px; color: #bbb; margin-top: 1px; }
+    .kpi-step::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #eee; }
+    .kpi-step.step-past::before   { background: var(--c-green); }
+    .kpi-step.step-future::before { background: var(--c-blue); }
+    .kpi-step.step-pending::before{ background: #ddd; }
+
+    /* FILTER PILLS */
+    .filter-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .filter-label { font-size: 11px; color: rgba(255,255,255,.75); font-weight: 500; margin-right: 2px; }
+    .filter-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; cursor: pointer; border: 1.5px solid rgba(255,255,255,.4); background: rgba(255,255,255,.15); color: rgba(255,255,255,.85); transition: all .15s; }
+    .filter-pill:hover { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.7); color: white; }
+    .filter-pill.active { background: white !important; color: var(--c-dblue) !important; border-color: white; font-weight: 600; }
+    .filter-pill .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    /* DATE CHIPS */
+    .date-chip { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 3px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+    .date-chip .material-icons { font-size: 11px; }
+    .chip-past    { background: #d2f0eb; color: #0e7060; }           /* vert — passé */
+    .chip-future  { background: #e8ecf3; color: var(--c-blue); }     /* bleu — futur */
+    .chip-rv-next { background: #fff3cd; color: #856404; }            /* jaune — prochaine remise */
+    .chip-rv-past { background: #e8ecf3; color: var(--c-blue); }     /* bleu neutre — RV passée */
+    .chip-na      { color: #bbb; font-size: 11px; font-style: italic; }
+
+    /* STATUS BADGES */
+    .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 600; white-space: nowrap; }
+    .status-badge .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .s-visuels      { background: #fff3cd; color: #856404; }
+    .s-visuels .status-dot      { background: #e6a817; }
+    .s-encours      { background: #d2f0eb; color: #0e7060; }
+    .s-encours .status-dot      { background: var(--c-green); }
+    .s-term-nonfact { background: #e8ecf3; color: var(--c-blue); }
+    .s-term-nonfact .status-dot { background: var(--c-blue); }
+    .s-term-fact    { background: #ede8f8; color: #5a3fa0; }
+    .s-term-fact .status-dot    { background: var(--c-social); }
+    .s-term-pay     { background: #c6ead5; color: #1a6635; }
+    .s-term-pay .status-dot     { background: #2e8b57; }
+
+    /* TABLE */
+    .retro-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .retro-table thead tr { background: var(--c-dblue); position: sticky; top: 0; z-index: 5; }
+    .retro-table thead th { padding: 9px 12px; color: rgba(255,255,255,.75); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; user-select: none; }
+    .retro-table thead th.sortable { cursor: pointer; }
+    .retro-table thead th.sortable:hover { color: white; background: rgba(255,255,255,.08); }
+    .retro-table thead th .sort-icons { display: inline-flex; flex-direction: column; gap: 1px; margin-left: 4px; vertical-align: middle; opacity: .35; }
+    .retro-table thead th .sort-icons .mi { font-size: 10px; line-height: 1; font-family: 'Material Icons'; }
+    .retro-table thead th.asc  .sort-icons,
+    .retro-table thead th.desc .sort-icons { opacity: 1; color: var(--c-orange); }
+    .retro-table thead th.asc  .mi-up   { opacity: 1; }
+    .retro-table thead th.asc  .mi-down { opacity: .3; }
+    .retro-table thead th.desc .mi-up   { opacity: .3; }
+    .retro-table thead th.desc .mi-down { opacity: 1; }
+
+    /* group rows */
+    .retro-table .tr-group td { background: #f0f2f5 !important; padding: 7px 12px; font-size: 10px; font-weight: 700; color: var(--c-gray); text-transform: uppercase; letter-spacing: .8px; border-bottom: none; }
+    .group-dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
+    .retro-table .tr-supplier td { background: white !important; padding: 8px 12px 3px; border-bottom: none; }
+    .supplier-name { font-weight: 600; font-size: 12px; color: var(--c-dblue); display: flex; align-items: center; gap: 6px; }
+    .supplier-name .material-icons { font-size: 13px; color: var(--c-gray); }
+
+    /* data rows */
+    .retro-table tbody .tr-data td { padding: 8px 12px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
+    .retro-table tbody .tr-data:hover td { background: #f5faf9; }
+
+    .mec-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 3px; font-size: 10px; font-weight: 700; background: var(--c-dblue); color: white; flex-shrink: 0; }
+    .levier-cell { display: flex; flex-direction: column; gap: 1px; }
+    .levier-main { font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+    .levier-sub-text { font-size: 10px; color: var(--c-gray); margin-left: 14px; }
+    .type-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; display: inline-block; }
+
+    .table-scroll { overflow-x: auto; max-height: 1080px; overflow-y: auto; }
+    .small { font-size: 10px; }
+    .text-grayed { color: var(--c-gray); }
+
+    /* Legend footer */
+    .chips-legend { display: flex; gap: 12px; flex-wrap: wrap; padding: 12px 20px; border-top: 1px solid #f0f0f0; background: #fafbfc; align-items: center; }
+    .cl-item { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--c-gray); }
+    .legend-sep { width: 1px; height: 18px; background: #ddd; margin: 0 4px; }
+
+    /* Sort indicator in header subtitle */
+    .sort-active-label { font-size: 9px; color: var(--c-orange); font-weight: 600; margin-left: 8px; font-style: italic; opacity: 0; transition: opacity .2s; }
+    .sort-active-label.visible { opacity: 1; }
+  </style>
+</head>
+<body class="mode-admin">
+
+<!-- NAVBAR -->
+<div class="navbar-wrap">
+  <div class="content-maxw-top">
+    <a class="navbar-logo" href="#"></a>
+    <ul class="d-navbar-buttons navbar-buttons">
+      <li class="tb-item active"><a href="#"><span class="tb-label">Campagnes</span></a></li>
+      <li class="tb-item"><a href="#"><span class="tb-label">Clients</span></a></li>
+      <li class="tb-item"><a href="#"><span class="tb-label">Données</span></a></li>
+      <li class="tb-item"><a href="#"><span class="tb-label">Suivi Business</span></a></li>
+      <li class="tb-item"><a href="#"><span class="tb-label">Suivi Factures Fournisseurs</span></a></li>
+      <li class="tb-item no-right-border"><a href="#"><span class="tb-label material-icons">person</span></a></li>
+    </ul>
+    <div class="v4-breadcrumb-wrap">
+      <div class="d-breadcrumb">
+        <span class="d-breadcrumb-item"><a href="#">Démo Client — Campagnes 2026</a></span>
+        <span class="d-breadcrumb-item active"><a href="#">DEMO_Campagne_2026</a></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="v4-content">
+  <div class="v4-page-content">
+    <div class="content-maxw">
+
+      <!-- Title -->
+      <section>
+        <div class="autowidth2">
+          <div class="aw-title f-title-page overflow-hidden">
+            <div class="title-ellipsis">
+              <span>DEMO_Campagne_2026</span>
+              <span class="campaign-state">Active</span>
+            </div>
+          </div>
+          <div class="aw-actions">
+            <div class="rc-top-actions">
+              <button class="v4-btn-actions" onclick="togglePopup()" type="button">
+                <span>Actions</span><i class="material-icons">expand_more</i>
+              </button>
+              <div id="popup-top-actions" class="v4-popup-mini">
+                <a href="#" class="pm-item text-red" data-icon="event_busy">Annuler</a>
+                <a href="#" class="pm-item" data-icon="edit">Modifier</a>
+                <a href="#" class="pm-item" data-icon="cloud_upload">Republier</a>
+                <a href="#" class="pm-item" data-icon="file_upload">Export Excel</a>
+                <a href="#" class="pm-item" data-icon="file_upload">Export Monday</a>
+                <a href="#" class="pm-item" data-icon="file_copy">Documents</a>
+                <a href="#" class="pm-item" data-icon="info">Copier l'info</a>
+                <a href="#" class="pm-item" data-icon="assignment">Fournisseurs et N. TVA régies</a>
+                <a href="#" class="pm-item" data-icon="business">Fiche client</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="f-sm text-pale block" style="position:relative;z-index:1;margin-bottom:-16px;padding-bottom:24px;">
+          <span class="id-value campaign-id"># 9999</span>
+        </div>
+      </section>
+
+      <!-- Tabs -->
+      <div class="page-tabs">
+        <div class="p-tab"><span class="pt-title">Orientations</span></div>
+        <div class="p-tab"><span class="pt-title">Recommandation</span></div>
+        <div class="p-tab active"><span class="pt-title">Retroplanning</span></div>
+        <div class="p-tab"><span class="pt-title">Bilan financier</span></div>
+        <div class="p-tab"><span class="pt-title">Suivi de performance</span></div>
+        <div class="p-tab"><span class="pt-title">Documents</span></div>
+      </div>
+
+      <!--
+        SIMULATION : aujourd'hui = 20/03/2026
+        Campagne couvre : 01/02/2026 → 30/04/2026
+        Jalons KPI :
+          ① créé     15/11/25  → passé ✓
+          ② validé   08/12/25  → passé ✓
+          ③ 1re RV   10/01/26  → passé ✓
+          ④ début    01/02/26  → passé ✓
+          ⑤ fin      30/04/26  → futur
+          ⑥ fact.    15/05/26  → futur
+          ⑦ paiement —         → non renseigné
+      -->
+      <div class="kpi-timeline">
+        <div class="kpi-step step-past">
+          <div class="kpi-step-num">① Création</div>
+          <div class="kpi-step-label">Brief créé</div>
+          <div class="kpi-step-date is-past">15/11/25</div>
+          <div class="kpi-step-sub">created_at</div>
+        </div>
+        <div class="kpi-step step-past">
+          <div class="kpi-step-num">② Validation</div>
+          <div class="kpi-step-label">Reco validée</div>
+          <div class="kpi-step-date is-past">08/12/25</div>
+          <div class="kpi-step-sub">1er clic pouce ✓</div>
+        </div>
+        <div class="kpi-step step-past">
+          <div class="kpi-step-num">③ Visuels</div>
+          <div class="kpi-step-label">1ère remise visuel</div>
+          <div class="kpi-step-date is-past">10/01/26</div>
+          <div class="kpi-step-sub">min(DateRemise)</div>
+        </div>
+        <div class="kpi-step step-past">
+          <div class="kpi-step-num">④ Début</div>
+          <div class="kpi-step-label">Début campagne</div>
+          <div class="kpi-step-date is-past">01/02/26</div>
+          <div class="kpi-step-sub">Campaign.DateStart</div>
+        </div>
+        <div class="kpi-step step-future">
+          <div class="kpi-step-num">⑤ Fin</div>
+          <div class="kpi-step-label">Fin campagne</div>
+          <div class="kpi-step-date is-future">30/04/26</div>
+          <div class="kpi-step-sub">Campaign.DateEnd</div>
+        </div>
+        <div class="kpi-step step-future">
+          <div class="kpi-step-num">⑥ Facturation</div>
+          <div class="kpi-step-label">Fact. client</div>
+          <div class="kpi-step-date is-pending">En attente</div>
+          <div class="kpi-step-sub">Adring → Client</div>
+        </div>
+        <div class="kpi-step step-pending">
+          <div class="kpi-step-num">⑦ Paiement</div>
+          <div class="kpi-step-label">Paiement client</div>
+          <div class="kpi-step-date is-pending">En attente</div>
+          <div class="kpi-step-sub">Client → Adring</div>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="v4-block">
+        <div class="vb-header">
+          <div class="vh-title">
+            <i class="material-icons">event_note</i>
+            Suivi opérationnel par levier
+            <span id="sort-active-label" class="sort-active-label">Trié par : —</span>
+          </div>
+          <div class="vh-right">
+            <div class="filter-bar">
+              <span class="filter-label">Levier :</span>
+              <span class="filter-pill active" onclick="filterTable(this,'all')">Tous</span>
+              <span class="filter-pill" onclick="filterTable(this,'ooh')"><span class="pill-dot" style="background:var(--c-ooh);"></span>OOH</span>
+              <span class="filter-pill" onclick="filterTable(this,'dooh')"><span class="pill-dot" style="background:#8ba1d7;"></span>DOOH</span>
+              <span class="filter-pill" onclick="filterTable(this,'prog')"><span class="pill-dot" style="background:var(--c-prog);"></span>Prog.</span>
+              <span class="filter-pill" onclick="filterTable(this,'social')"><span class="pill-dot" style="background:var(--c-social);"></span>Social</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vb-content" style="padding:0;">
+          <div class="table-scroll">
+            <!--
+              COLONNES SORTABLES : clic sur en-tête → tri des lignes de données
+              à l'intérieur de chaque groupe levier.
+              Les tr-group et tr-supplier restent collés à leurs lignes de données.
+              
+              data-sort sur chaque td : valeur normalisée pour comparaison
+                - dates : format YYYYMMDD
+                - statuts : ordre logique 1→5
+                - texte : alphanumérique
+            -->
+            <table class="retro-table" id="retro-table">
+              <thead>
+                <tr>
+                  <th style="width:30px;">M</th>
+                  <th>Levier / Format</th>
+                  <th class="sortable" data-col="2" onclick="sortTable(this)">
+                    Remise visuel
+                    <span class="sort-icons"><span class="mi mi-up">▲</span><span class="mi mi-down">▼</span></span>
+                    <div style="font-size:8px;font-weight:400;opacity:.65;margin-top:1px;">🟡 prochaine &nbsp;·&nbsp; 🔵 passée</div>
+                  </th>
+                  <th class="sortable" data-col="3" onclick="sortTable(this)">
+                    Début diffusion
+                    <span class="sort-icons"><span class="mi mi-up">▲</span><span class="mi mi-down">▼</span></span>
+                  </th>
+                  <th class="sortable" data-col="4" onclick="sortTable(this)">
+                    Fin diffusion
+                    <span class="sort-icons"><span class="mi mi-up">▲</span><span class="mi mi-down">▼</span></span>
+                  </th>
+                  <th class="sortable" data-col="5" onclick="sortTable(this)">
+                    Fact. fournisseur
+                    <span class="sort-icons"><span class="mi mi-up">▲</span><span class="mi mi-down">▼</span></span>
+                  </th>
+                  <th class="sortable" data-col="6" onclick="sortTable(this)">
+                    Échéance fourn.
+                    <span class="sort-icons"><span class="mi mi-up">▲</span><span class="mi mi-down">▼</span></span>
+                  </th>
+                  <th class="sortable" data-col="7" onclick="sortTable(this)">
+                    Paiement fourn.
+                    <span class="sort-icons"><span class="mi mi-up">▲</span><span class="mi mi-down">▼</span></span>
+                  </th>
+                  <th class="sortable" data-col="8" onclick="sortTable(this)">
+                    Statut
+                    <span class="sort-icons"><span class="mi mi-up">▲</span><span class="mi mi-down">▼</span></span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+
+                <!-- ═══════════════════════════════════════════
+                     OOH
+                     Situations : visuels à envoyer, en cours, terminée non facturée
+                ═══════════════════════════════════════════ -->
+                <tr class="tr-group trow" data-levier="ooh" data-group="ooh">
+                  <td colspan="9"><span class="group-dot" style="background:var(--c-ooh);"></span>OOH</td>
+                </tr>
+
+                <!-- Fournisseur 1 : JCDecaux — visuels à envoyer -->
+                <tr class="tr-supplier trow" data-levier="ooh" data-group="ooh" data-supplier="jcdecaux">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>JCDecaux</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="ooh" data-group="ooh" data-supplier="jcdecaux">
+                  <td><span class="mec-badge">A</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-ooh);"></span>Abribus 2m² — Paris intra</div>
+                      <div class="levier-sub-text">740 faces · Semaines 12–16</div>
+                    </div>
+                  </td>
+                  <!-- RV prochaine → jaune -->
+                  <td data-sort="20260325"><span class="date-chip chip-rv-next"><i class="material-icons">calendar_today</i>25/03/26</span></td>
+                  <td data-sort="20260401"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>01/04/26</span></td>
+                  <td data-sort="20260420"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>20/04/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="1"><span class="status-badge s-visuels"><span class="status-dot"></span>Visuels à envoyer</span></td>
+                </tr>
+
+                <!-- Fournisseur 2 : Clear Channel — en cours -->
+                <tr class="tr-supplier trow" data-levier="ooh" data-group="ooh" data-supplier="clearchannel-ooh">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>Clear Channel Outdoor</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="ooh" data-group="ooh" data-supplier="clearchannel-ooh">
+                  <td><span class="mec-badge">B</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-ooh);"></span>4x3 Grandes artères — IDF</div>
+                      <div class="levier-sub-text">320 faces · Semaines 07–13 · 18 400 €</div>
+                    </div>
+                  </td>
+                  <!-- RV passée → bleu neutre -->
+                  <td data-sort="20260110"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>10/01/26</span></td>
+                  <td data-sort="20260201"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/02/26</span></td>
+                  <td data-sort="20260327"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>27/03/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="2"><span class="status-badge s-encours"><span class="status-dot"></span>En cours</span></td>
+                </tr>
+
+                <!-- Fournisseur 3 : Media Transports — terminée non facturée -->
+                <tr class="tr-supplier trow" data-levier="ooh" data-group="ooh" data-supplier="mediatransports">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>Media Transports</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="ooh" data-group="ooh" data-supplier="mediatransports">
+                  <td><span class="mec-badge">C</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-ooh);"></span>Arrières bus — Petite Couronne</div>
+                      <div class="levier-sub-text">1 457 affiches · Semaines 49–52 · 12 000 €</div>
+                    </div>
+                  </td>
+                  <td data-sort="20251125"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>25/11/25</span></td>
+                  <td data-sort="20251201"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/12/25</span></td>
+                  <td data-sort="20251231"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>31/12/25</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="3"><span class="status-badge s-term-nonfact"><span class="status-dot"></span>Terminée, non facturée</span></td>
+                </tr>
+
+                <!-- ═══════════════════════════════════════════
+                     DOOH
+                     Situations : en cours, terminée facturée
+                ═══════════════════════════════════════════ -->
+                <tr class="tr-group trow" data-levier="dooh" data-group="dooh">
+                  <td colspan="9"><span class="group-dot" style="background:var(--c-dooh);"></span>DOOH</td>
+                </tr>
+
+                <tr class="tr-supplier trow" data-levier="dooh" data-group="dooh" data-supplier="clearchannel-dooh">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>Clear Channel Digital</div></td>
+                </tr>
+                <!-- Vague 1 — en cours -->
+                <tr class="tr-data trow" data-levier="dooh" data-group="dooh" data-supplier="clearchannel-dooh">
+                  <td><span class="mec-badge" style="background:var(--c-dooh);">D</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-dooh);"></span>Réseau DOOH IDF — Vague 1</div>
+                      <div class="levier-sub-text">150 écrans · Semaines 05–12 · 22 000 €</div>
+                    </div>
+                  </td>
+                  <td data-sort="20260120"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>20/01/26</span></td>
+                  <td data-sort="20260202"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>02/02/26</span></td>
+                  <td data-sort="20260320"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>20/03/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="2"><span class="status-badge s-encours"><span class="status-dot"></span>En cours</span></td>
+                </tr>
+                <!-- Vague 2 — visuels à envoyer -->
+                <tr class="tr-data trow" data-levier="dooh" data-group="dooh" data-supplier="clearchannel-dooh">
+                  <td><span class="mec-badge" style="background:var(--c-dooh);">D</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-dooh);"></span>Réseau DOOH IDF — Vague 2</div>
+                      <div class="levier-sub-text">150 écrans · Semaines 13–17 · 22 000 €</div>
+                    </div>
+                  </td>
+                  <!-- RV prochaine → jaune -->
+                  <td data-sort="20260328"><span class="date-chip chip-rv-next"><i class="material-icons">calendar_today</i>28/03/26</span></td>
+                  <td data-sort="20260406"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>06/04/26</span></td>
+                  <td data-sort="20260426"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>26/04/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="1"><span class="status-badge s-visuels"><span class="status-dot"></span>Visuels à envoyer</span></td>
+                </tr>
+
+                <tr class="tr-supplier trow" data-levier="dooh" data-group="dooh" data-supplier="lamar">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>Lamar DOOH France</div></td>
+                </tr>
+                <!-- Terminée facturée -->
+                <tr class="tr-data trow" data-levier="dooh" data-group="dooh" data-supplier="lamar">
+                  <td><span class="mec-badge" style="background:var(--c-dooh);">E</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-dooh);"></span>Gares & Transports — Paris</div>
+                      <div class="levier-sub-text">80 écrans · Semaines 49–04 · 15 500 €</div>
+                    </div>
+                  </td>
+                  <td data-sort="20251205"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>05/12/25</span></td>
+                  <td data-sort="20251201"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/12/25</span></td>
+                  <td data-sort="20260125"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>25/01/26</span></td>
+                  <td data-sort="20260210">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>10/02/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">F-LAM-2026-0021</div>
+                  </td>
+                  <td data-sort="20260310"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>10/03/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="4"><span class="status-badge s-term-fact"><span class="status-dot"></span>Terminée, facturée</span></td>
+                </tr>
+
+                <!-- ═══════════════════════════════════════════
+                     PROGRAMMATIQUE
+                     Situations : terminée payée, en cours
+                ═══════════════════════════════════════════ -->
+                <tr class="tr-group trow" data-levier="prog" data-group="prog">
+                  <td colspan="9"><span class="group-dot" style="background:var(--c-prog);"></span>Programmatique</td>
+                </tr>
+
+                <tr class="tr-supplier trow" data-levier="prog" data-group="prog" data-supplier="trading">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>Trading Media Premium</div></td>
+                </tr>
+                <!-- Terminée payée -->
+                <tr class="tr-data trow" data-levier="prog" data-group="prog" data-supplier="trading">
+                  <td><span class="mec-badge" style="background:var(--c-prog);">F</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-prog);"></span>Display bannières — Vague 1</div>
+                      <div class="levier-sub-text">300×250 + 728×90 · Déc–Jan · 5 500 €</div>
+                    </div>
+                  </td>
+                  <td data-sort="20260102"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>02/01/26</span></td>
+                  <td data-sort="20260107"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>07/01/26</span></td>
+                  <td data-sort="20260214"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>14/02/26</span></td>
+                  <td data-sort="20260120">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>20/01/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">F-TMP-2026-0011</div>
+                  </td>
+                  <td data-sort="20260220"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>20/02/26</span></td>
+                  <td data-sort="20260301"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/03/26</span></td>
+                  <td data-sort="5"><span class="status-badge s-term-pay"><span class="status-dot"></span>Terminée, payée</span></td>
+                </tr>
+                <!-- En cours Vague 2 -->
+                <tr class="tr-data trow" data-levier="prog" data-group="prog" data-supplier="trading">
+                  <td><span class="mec-badge" style="background:var(--c-prog);">F</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-prog);"></span>Display bannières — Vague 2</div>
+                      <div class="levier-sub-text">300×250 + 728×90 · Fév–Avr · 5 500 €</div>
+                    </div>
+                  </td>
+                  <!-- RV prochaine restante -->
+                  <td data-sort="20260315"><span class="date-chip chip-rv-next"><i class="material-icons">calendar_today</i>15/03/26</span></td>
+                  <td data-sort="20260301"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/03/26</span></td>
+                  <td data-sort="20260430"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>30/04/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="2"><span class="status-badge s-encours"><span class="status-dot"></span>En cours</span></td>
+                </tr>
+
+                <!-- ═══════════════════════════════════════════
+                     SOCIAL ADS
+                     Situations : toutes les 5
+                ═══════════════════════════════════════════ -->
+                <tr class="tr-group trow" data-levier="social" data-group="social">
+                  <td colspan="9"><span class="group-dot" style="background:var(--c-social);"></span>Social Ads</td>
+                </tr>
+
+                <!-- Meta -->
+                <tr class="tr-supplier trow" data-levier="social" data-group="social" data-supplier="meta">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>Meta Platforms Ireland</div></td>
+                </tr>
+                <!-- Meta V1 → visuels à envoyer -->
+                <tr class="tr-data trow" data-levier="social" data-group="social" data-supplier="meta">
+                  <td><span class="mec-badge" style="background:var(--c-social);">G</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-social);"></span>Meta — Vidéo Reels</div>
+                      <div class="levier-sub-text">25–49 ans CSP+ · Vague 1 · 8 000 €</div>
+                    </div>
+                  </td>
+                  <!-- RV prochaine → jaune -->
+                  <td data-sort="20260322"><span class="date-chip chip-rv-next"><i class="material-icons">calendar_today</i>22/03/26</span></td>
+                  <td data-sort="20260401"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>01/04/26</span></td>
+                  <td data-sort="20260415"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>15/04/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="1"><span class="status-badge s-visuels"><span class="status-dot"></span>Visuels à envoyer</span></td>
+                </tr>
+                <!-- Meta V2 → en cours -->
+                <tr class="tr-data trow" data-levier="social" data-group="social" data-supplier="meta">
+                  <td><span class="mec-badge" style="background:var(--c-social);">G</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-social);"></span>Meta — Post + Carrousel</div>
+                      <div class="levier-sub-text">25–49 ans CSP+ · Vague 2 · 5 000 €</div>
+                    </div>
+                  </td>
+                  <td data-sort="20260205"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>05/02/26</span></td>
+                  <td data-sort="20260215"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/02/26</span></td>
+                  <td data-sort="20260415"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>15/04/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="2"><span class="status-badge s-encours"><span class="status-dot"></span>En cours</span></td>
+                </tr>
+                <!-- Meta V3 → terminée non facturée -->
+                <tr class="tr-data trow" data-levier="social" data-group="social" data-supplier="meta">
+                  <td><span class="mec-badge" style="background:var(--c-social);">G</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-social);"></span>Meta — Story 9:16</div>
+                      <div class="levier-sub-text">25–49 ans CSP+ · Vague 0 · 3 000 €</div>
+                    </div>
+                  </td>
+                  <td data-sort="20260110"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>10/01/26</span></td>
+                  <td data-sort="20260120"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>20/01/26</span></td>
+                  <td data-sort="20260210"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>10/02/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">— en attente</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="3"><span class="status-badge s-term-nonfact"><span class="status-dot"></span>Terminée, non facturée</span></td>
+                </tr>
+
+                <!-- TikTok -->
+                <tr class="tr-supplier trow" data-levier="social" data-group="social" data-supplier="tiktok">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>TikTok Information Technologies</div></td>
+                </tr>
+                <!-- TikTok → terminée facturée -->
+                <tr class="tr-data trow" data-levier="social" data-group="social" data-supplier="tiktok">
+                  <td><span class="mec-badge" style="background:var(--c-social);">H</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-social);"></span>TikTok — TopView 15s</div>
+                      <div class="levier-sub-text">18–35 ans · Jan · 6 000 €</div>
+                    </div>
+                  </td>
+                  <td data-sort="20260105"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>05/01/26</span></td>
+                  <td data-sort="20260115"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/01/26</span></td>
+                  <td data-sort="20260215"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/02/26</span></td>
+                  <td data-sort="20260301">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/03/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">F-TTK-2026-0044</div>
+                  </td>
+                  <td data-sort="20260401"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>01/04/26</span></td>
+                  <td data-sort="99999999"><span class="chip-na">—</span></td>
+                  <td data-sort="4"><span class="status-badge s-term-fact"><span class="status-dot"></span>Terminée, facturée</span></td>
+                </tr>
+
+                <!-- Google -->
+                <tr class="tr-supplier trow" data-levier="social" data-group="social" data-supplier="google">
+                  <td colspan="9"><div class="supplier-name"><i class="material-icons">business</i>Google Ireland Limited</div></td>
+                </tr>
+                <!-- Google → terminée payée -->
+                <tr class="tr-data trow" data-levier="social" data-group="social" data-supplier="google">
+                  <td><span class="mec-badge" style="background:var(--c-social);">I</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-social);"></span>YouTube — Bumper 6s</div>
+                      <div class="levier-sub-text">Broad reach · Déc · 3 500 €</div>
+                    </div>
+                  </td>
+                  <td data-sort="20251210"><span class="date-chip chip-rv-past"><i class="material-icons">calendar_today</i>10/12/25</span></td>
+                  <td data-sort="20251215"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/12/25</span></td>
+                  <td data-sort="20260115"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/01/26</span></td>
+                  <td data-sort="20260201">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/02/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">F-GGL-2026-0008</div>
+                  </td>
+                  <td data-sort="20260301"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/03/26</span></td>
+                  <td data-sort="20260305"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>05/03/26</span></td>
+                  <td data-sort="5"><span class="status-badge s-term-pay"><span class="status-dot"></span>Terminée, payée</span></td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Légende -->
+          <div class="chips-legend">
+            <div class="cl-item"><span class="date-chip chip-past" style="font-size:10px;padding:1px 6px;"><i class="material-icons" style="font-size:10px;">check_circle</i>jj/mm</span> Date passée</div>
+            <div class="cl-item"><span class="date-chip chip-future" style="font-size:10px;padding:1px 6px;"><i class="material-icons" style="font-size:10px;">calendar_today</i>jj/mm</span> Date à venir</div>
+            <div class="cl-item"><span class="date-chip chip-rv-next" style="font-size:10px;padding:1px 6px;"><i class="material-icons" style="font-size:10px;">calendar_today</i>jj/mm</span> Prochaine remise visuel</div>
+            <div class="cl-item"><span class="date-chip chip-rv-past" style="font-size:10px;padding:1px 6px;"><i class="material-icons" style="font-size:10px;">calendar_today</i>jj/mm</span> Remise visuel passée</div>
+            <div class="legend-sep"></div>
+            <div class="cl-item"><span class="status-badge s-visuels" style="font-size:10px;padding:2px 7px;"><span class="status-dot"></span>Visuels à envoyer</span></div>
+            <div class="cl-item"><span class="status-badge s-encours" style="font-size:10px;padding:2px 7px;"><span class="status-dot"></span>En cours</span></div>
+            <div class="cl-item"><span class="status-badge s-term-nonfact" style="font-size:10px;padding:2px 7px;"><span class="status-dot"></span>Terminée, non facturée</span></div>
+            <div class="cl-item"><span class="status-badge s-term-fact" style="font-size:10px;padding:2px 7px;"><span class="status-dot"></span>Terminée, facturée</span></div>
+            <div class="cl-item"><span class="status-badge s-term-pay" style="font-size:10px;padding:2px 7px;"><span class="status-dot"></span>Terminée, payée</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Actions dropdown ── */
+  function togglePopup() {
+    document.getElementById('popup-top-actions').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.rc-top-actions'))
+      document.getElementById('popup-top-actions').classList.remove('open');
+  });
+
+  /* ── Levier filter ── */
+  function filterTable(pill, levier) {
+    pill.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    document.querySelectorAll('#retro-table .trow').forEach(row => {
+      const rl = row.getAttribute('data-levier');
+      row.style.display = (levier === 'all' || rl === levier) ? '' : 'none';
+    });
+  }
+
+  /* ──────────────────────────────────────────────────
+     SORT — tri des lignes de données à l'intérieur
+     de chaque groupe, en conservant le regroupement.
+
+     Principe :
+     1. Pour chaque groupe (data-group), collecter les blocs
+        [tr-supplier + ses tr-data].
+     2. Trier les blocs selon la colonne cliquée.
+     3. Réécrire le tbody en conservant l'ordre des groupes.
+  ────────────────────────────────────────────────── */
+  let currentCol = null;
+  let currentDir = 'asc';
+
+  const COL_LABELS = {
+    '2': 'Remise visuel',
+    '3': 'Début diffusion',
+    '4': 'Fin diffusion',
+    '5': 'Fact. fournisseur',
+    '6': 'Échéance',
+    '7': 'Paiement',
+    '8': 'Statut'
+  };
+
+  function sortTable(th) {
+    const col = th.getAttribute('data-col');
+
+    // Toggle direction
+    if (currentCol === col) {
+      currentDir = currentDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentDir = 'asc';
+      currentCol = col;
+    }
+
+    // Update header indicators
+    document.querySelectorAll('.retro-table thead th').forEach(t => {
+      t.classList.remove('asc', 'desc');
+    });
+    th.classList.add(currentDir);
+
+    // Update sort label in header
+    const lbl = document.getElementById('sort-active-label');
+    lbl.textContent = `Trié par : ${COL_LABELS[col]} (${currentDir === 'asc' ? '▲' : '▼'})`;
+    lbl.classList.add('visible');
+
+    // Get all groups in order
+    const tbody = document.getElementById('table-body');
+    const groups = [...new Set(
+      [...tbody.querySelectorAll('tr[data-group]')].map(r => r.getAttribute('data-group'))
+    )];
+
+    groups.forEach(groupId => {
+      // Get the group header row
+      const groupRow = tbody.querySelector(`.tr-group[data-group="${groupId}"]`);
+      if (!groupRow) return;
+
+      // Collect all supplier blocks within this group
+      // A block = tr-supplier + all consecutive tr-data rows after it
+      const allGroupRows = [...tbody.querySelectorAll(`tr[data-group="${groupId}"]`)];
+
+      // Build blocks: [{supplierRow, dataRows[]}]
+      const blocks = [];
+      let currentBlock = null;
+
+      allGroupRows.forEach(row => {
+        if (row.classList.contains('tr-group')) return; // skip group header
+        if (row.classList.contains('tr-supplier')) {
+          currentBlock = { supplierRow: row, dataRows: [] };
+          blocks.push(currentBlock);
+        } else if (row.classList.contains('tr-data') && currentBlock) {
+          currentBlock.dataRows.push(row);
+        }
+      });
+
+      // For each block, sort its data rows
+      blocks.forEach(block => {
+        block.dataRows.sort((a, b) => {
+          const aVal = getSortVal(a, col);
+          const bVal = getSortVal(b, col);
+          if (aVal < bVal) return currentDir === 'asc' ? -1 : 1;
+          if (aVal > bVal) return currentDir === 'asc' ? 1 : -1;
+          return 0;
+        });
+      });
+
+      // Sort the blocks themselves by their first data row's sort value
+      blocks.sort((a, b) => {
+        const aVal = a.dataRows.length ? getSortVal(a.dataRows[0], col) : '99999999';
+        const bVal = b.dataRows.length ? getSortVal(b.dataRows[0], col) : '99999999';
+        if (aVal < bVal) return currentDir === 'asc' ? -1 : 1;
+        if (aVal > bVal) return currentDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      // Re-insert: group header first, then blocks
+      let insertAfter = groupRow;
+
+      blocks.forEach(block => {
+        // Insert supplier row
+        insertAfter.after(block.supplierRow);
+        insertAfter = block.supplierRow;
+
+        // Insert data rows
+        block.dataRows.forEach(dr => {
+          insertAfter.after(dr);
+          insertAfter = dr;
+        });
+      });
+    });
+  }
+
+  function getSortVal(row, col) {
+    const cells = row.querySelectorAll('td');
+    const colIdx = parseInt(col) - 1; // col attribute is 1-based but skips first 2 cols
+    // col 2 = index 2, col 3 = index 3 ... (0-indexed)
+    const cell = cells[colIdx];
+    if (!cell) return '99999999';
+    return cell.getAttribute('data-sort') || '99999999';
+  }
+</script>
+</body>
+</html>
