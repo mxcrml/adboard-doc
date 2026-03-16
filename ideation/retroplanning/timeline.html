@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adboard — KPI Jalons ⑥⑦ — Correction dates & couleurs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --c-green:  #00b299;
+      --c-dgreen: #008f7a;
+      --c-blue:   #455378;
+      --c-dblue:  #0F2A48;
+      --c-orange: #fecf4d;
+      --c-red:    #dd4d4d;
+      --c-gray:   #8A9099;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: Poppins, sans-serif; background: #f0f2f5; color: var(--c-dblue); margin: 0; padding: 32px; font-size: 14px; }
+
+    .scenario-label {
+      font-size: 10px; font-weight: 700; color: var(--c-gray);
+      text-transform: uppercase; letter-spacing: .8px;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px; margin-top: 28px;
+    }
+    .scenario-label::after { content:''; flex:1; height:1px; background:#e0e3e8; }
+    .scenario-desc { font-size: 11px; color: var(--c-gray); margin-bottom: 12px; line-height: 1.5; }
+
+    /* KPI TIMELINE */
+    .kpi-timeline {
+      display: flex; align-items: stretch;
+      background: white; border-radius: 15px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden;
+    }
+    .kpi-step {
+      flex: 1; padding: 14px 14px 14px; position: relative;
+      border-right: 1px solid #f0f2f5;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .kpi-step:last-child { border-right: none; }
+    .kpi-step:not(:last-child)::after {
+      content:''; position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+      width:0; height:0; border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent; border-left: 10px solid #f0f2f5; z-index:2;
+    }
+    .kpi-step::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:#eee; }
+    .kpi-step.step-past::before    { background: var(--c-green); }
+    .kpi-step.step-future::before  { background: var(--c-blue); }
+    .kpi-step.step-pending::before { background: #ddd; }
+    .kpi-step.step-alert::before   { background: var(--c-red); }
+
+    .kpi-num   { font-size: 9px; font-weight: 700; color: #ccc; text-transform: uppercase; letter-spacing: .8px; }
+    .kpi-label { font-size: 10px; color: var(--c-gray); font-weight: 500; text-transform: uppercase; letter-spacing: .3px; line-height: 1.3; }
+
+    /* Date principale */
+    .kpi-date  { font-size: 15px; font-weight: 700; line-height: 1.2; margin-top: 3px; }
+    .kpi-date.past    { color: var(--c-green); }
+    .kpi-date.future  { color: var(--c-blue); }
+    .kpi-date.pending { color: #aaa; font-size: 12px; font-style: italic; font-weight: 400; }
+    .kpi-date.alert   { color: var(--c-red); }
+
+    /* Sous-label de la date */
+    .kpi-date-sub { font-size: 9.5px; color: #bbb; margin-top: 0px; }
+
+    /* Chip retard */
+    .chip-late {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: #fde8e8; color: var(--c-red);
+      font-size: 9.5px; font-weight: 700;
+      padding: 1px 6px; border-radius: 3px; margin-top: 2px; width: fit-content;
+    }
+    .chip-late .mi { font-family: 'Material Icons'; font-size: 10px; line-height: 1; }
+
+    /*
+      RANGÉE MONTANTS
+      ──────────────────────────────────────────────────────
+      Layout :
+        [montant facturé / BC]           [PAYÉ label]
+                                         [montant payé]
+
+      Montant facturé (gauche, grand) :
+        → Noir/dblue toujours — c'est un fait, pas un état
+
+      BC (sous le facturé, petit) :
+        → Gris — informatif
+
+      Montant payé (droite) :
+        → Vert   si payé = facturé à date (tout ce qui a été émis est réglé)
+        → Rouge  si retard (échéance passée, non payé)
+        → Gris   si rien encore reçu / en attente normale
+        Pas de jaune/orange — trop ambigu
+      ──────────────────────────────────────────────────────
+    */
+    .kpi-money-row {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 8px; margin-top: 6px;
+    }
+    .kpi-money-left { display: flex; flex-direction: column; gap: 1px; }
+    .kpi-money-right { text-align: right; flex-shrink: 0; }
+
+    .amount-billed { font-size: 14px; font-weight: 700; color: var(--c-dblue); line-height: 1.1; }
+    .amount-bc     { font-size: 9.5px; color: #bbb; font-weight: 400; }
+
+    .amount-paid-label { font-size: 9px; color: #bbb; text-transform: uppercase; letter-spacing: .4px; }
+    .amount-paid-value { font-size: 13px; font-weight: 700; }
+
+    /* Vert : tout ce qui a été émis est réglé */
+    .paid-ok   { color: var(--c-green); }
+    /* Rouge : retard de paiement */
+    .paid-late { color: var(--c-red); }
+    /* Gris : rien reçu ou en attente normale */
+    .paid-none { color: #ccc; font-style: italic; font-size: 11px; font-weight: 400; }
+  </style>
+</head>
+<body>
+
+<p style="font-size:12px;color:var(--c-gray);margin:0 0 4px;">
+  Simulation aujourd'hui = <strong style="color:var(--c-dblue);">20/03/2026</strong>
+</p>
+<p style="font-size:11px;color:#bbb;margin:0 0 0;">
+  Règle couleur montant payé — <strong style="color:var(--c-green);">vert</strong> : tout ce qui a été émis est réglé ·
+  <strong style="color:var(--c-red);">rouge</strong> : retard de paiement ·
+  <strong style="color:#ccc;">gris</strong> : en attente normale
+</p>
+
+
+<!-- ═══ CAS 1 : 1 facture · Tout payé ═══ -->
+<div class="scenario-label">Cas 1 — 1 facture · Tout payé</div>
+<p class="scenario-desc">Facturation unique en fin de campagne, 8 400 € émis et réglés. BC = 8 400 €.</p>
+<div class="kpi-timeline">
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">① Création</div><div class="kpi-label">Brief créé</div><div class="kpi-date past">15/11/25</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">② Validation</div><div class="kpi-label">Reco validée</div><div class="kpi-date past">08/12/25</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">③ 1re remise</div><div class="kpi-label">Visuels</div><div class="kpi-date past">10/01/26</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">④ Début</div><div class="kpi-label">Campagne</div><div class="kpi-date past">01/02/26</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">⑤ Fin</div><div class="kpi-label">Campagne</div><div class="kpi-date past">28/02/26</div></div>
+
+  <div class="kpi-step step-past">
+    <div class="kpi-num">⑥ Facturation</div>
+    <div class="kpi-label">Adring → Client</div>
+    <!-- Dernière (et seule) émission -->
+    <div class="kpi-date past">28/02/26</div>
+    <div class="kpi-date-sub">Dernière émission · 1 facture</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed">8 400 €</span>
+        <span class="amount-bc">BC : 8 400 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Payé</div>
+        <!-- Vert : émis = réglé -->
+        <div class="amount-paid-value paid-ok">8 400 €</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-step step-past">
+    <div class="kpi-num">⑦ Paiement</div>
+    <div class="kpi-label">Client → Adring</div>
+    <!-- Dernier paiement reçu -->
+    <div class="kpi-date past">15/03/26</div>
+    <div class="kpi-date-sub">Dernier paiement reçu</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed">8 400 €</span>
+        <span class="amount-bc">BC : 8 400 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Reçu</div>
+        <div class="amount-paid-value paid-ok">8 400 €</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ CAS 2 : 3 factures intermédiaires · 2 émises et payées · 3e à venir ═══ -->
+<div class="scenario-label">Cas 2 — 3 factures · En cours · 2 émises et réglées</div>
+<p class="scenario-desc">Campagne 3 mois, facturation mensuelle. F1 et F2 émises et payées. F3 sera émise en fin de campagne. BC = 12 600 €.</p>
+<div class="kpi-timeline">
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">① Création</div><div class="kpi-label">Brief créé</div><div class="kpi-date past">15/11/25</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">② Validation</div><div class="kpi-label">Reco validée</div><div class="kpi-date past">08/12/25</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">③ 1re remise</div><div class="kpi-label">Visuels</div><div class="kpi-date past">10/01/26</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">④ Début</div><div class="kpi-label">Campagne</div><div class="kpi-date past">01/02/26</div></div>
+  <div class="kpi-step step-future" style="flex:.6;"><div class="kpi-num">⑤ Fin</div><div class="kpi-label">Campagne</div><div class="kpi-date future">30/04/26</div></div>
+
+  <div class="kpi-step step-future">
+    <div class="kpi-num">⑥ Facturation</div>
+    <div class="kpi-label">Adring → Client</div>
+    <!-- Dernière émission en date -->
+    <div class="kpi-date past">28/02/26</div>
+    <div class="kpi-date-sub">Dernière émission · 2 factures</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed">8 400 €</span>
+        <span class="amount-bc">BC : 12 600 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Payé</div>
+        <!-- Vert : ce qui a été émis (8 400) est entièrement réglé -->
+        <div class="amount-paid-value paid-ok">8 400 €</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-step step-future">
+    <div class="kpi-num">⑦ Paiement</div>
+    <div class="kpi-label">Client → Adring</div>
+    <div class="kpi-date past">10/03/26</div>
+    <div class="kpi-date-sub">Dernier paiement reçu</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed">8 400 €</span>
+        <span class="amount-bc">BC : 12 600 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Reçu</div>
+        <div class="amount-paid-value paid-ok">8 400 €</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ CAS 3 : Paiement en retard ═══ -->
+<div class="scenario-label">Cas 3 — Retard de paiement</div>
+<p class="scenario-desc">
+  F1 (4 200 €) émise le 31/01 et réglée. F2 (4 200 €) émise le 28/02, non payée à ce jour (échéance 01/03 dépassée de 19 jours).
+  BC = 12 600 €.
+</p>
+<div class="kpi-timeline">
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">① Création</div><div class="kpi-label">Brief créé</div><div class="kpi-date past">15/11/25</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">② Validation</div><div class="kpi-label">Reco validée</div><div class="kpi-date past">08/12/25</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">③ 1re remise</div><div class="kpi-label">Visuels</div><div class="kpi-date past">10/01/26</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">④ Début</div><div class="kpi-label">Campagne</div><div class="kpi-date past">01/02/26</div></div>
+  <div class="kpi-step step-future" style="flex:.6;"><div class="kpi-num">⑤ Fin</div><div class="kpi-label">Campagne</div><div class="kpi-date future">30/04/26</div></div>
+
+  <div class="kpi-step step-future">
+    <div class="kpi-num">⑥ Facturation</div>
+    <div class="kpi-label">Adring → Client</div>
+    <div class="kpi-date past">28/02/26</div>
+    <div class="kpi-date-sub">Dernière émission · 2 factures</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed">8 400 €</span>
+        <span class="amount-bc">BC : 12 600 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Payé</div>
+        <!-- Gris : 8 400 émis mais seulement 4 200 reçus, pas de retard côté facturation elle-même -->
+        <div class="amount-paid-value paid-none">4 200 €</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑦ RETARD : F2 émise le 28/02, échéance 01/03, non payée → alerte rouge -->
+  <div class="kpi-step step-alert">
+    <div class="kpi-num">⑦ Paiement</div>
+    <div class="kpi-label">Client → Adring</div>
+    <!-- Dernière date d'échéance de paiement dépassée = date affichée -->
+    <div class="kpi-date alert">01/03/26</div>
+    <div class="chip-late"><span class="mi">warning</span>Retard · +19 jours</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed">8 400 €</span>
+        <span class="amount-bc">BC : 12 600 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Reçu</div>
+        <!-- Rouge : retard sur une partie, 4 200 manquants -->
+        <div class="amount-paid-value paid-late">4 200 €</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ CAS 4 : Campagne future · Aucune facture encore ═══ -->
+<div class="scenario-label">Cas 4 — Campagne future · Aucune facture encore</div>
+<p class="scenario-desc">BC signé, campagne pas encore commencée. Rien d'émis ni de payé.</p>
+<div class="kpi-timeline">
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">① Création</div><div class="kpi-label">Brief créé</div><div class="kpi-date past">10/03/26</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">② Validation</div><div class="kpi-label">Reco validée</div><div class="kpi-date past">15/03/26</div></div>
+  <div class="kpi-step step-future" style="flex:.6;"><div class="kpi-num">③ 1re remise</div><div class="kpi-label">Visuels</div><div class="kpi-date future">28/03/26</div></div>
+  <div class="kpi-step step-future" style="flex:.6;"><div class="kpi-num">④ Début</div><div class="kpi-label">Campagne</div><div class="kpi-date future">07/04/26</div></div>
+  <div class="kpi-step step-future" style="flex:.6;"><div class="kpi-num">⑤ Fin</div><div class="kpi-label">Campagne</div><div class="kpi-date future">30/05/26</div></div>
+
+  <div class="kpi-step step-pending">
+    <div class="kpi-num">⑥ Facturation</div>
+    <div class="kpi-label">Adring → Client</div>
+    <div class="kpi-date pending">En attente</div>
+    <div class="kpi-date-sub">Aucune facture émise</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed" style="color:#ccc;">— €</span>
+        <span class="amount-bc">BC : 24 000 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Payé</div>
+        <div class="amount-paid-value paid-none">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-step step-pending">
+    <div class="kpi-num">⑦ Paiement</div>
+    <div class="kpi-label">Client → Adring</div>
+    <div class="kpi-date pending">En attente</div>
+    <div class="kpi-date-sub">Aucun paiement reçu</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed" style="color:#ccc;">— €</span>
+        <span class="amount-bc">BC : 24 000 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Reçu</div>
+        <div class="amount-paid-value paid-none">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ CAS 5 : BC révisé ═══ -->
+<div class="scenario-label">Cas 5 — BC révisé en cours de campagne</div>
+<p class="scenario-desc">BC initial 8 400 €, avenant à 11 200 €. 1 facture émise et payée sur l'ancien montant. Libellé "BC révisé" en dessous.</p>
+<div class="kpi-timeline">
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">① Création</div><div class="kpi-label">Brief créé</div><div class="kpi-date past">15/11/25</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">② Validation</div><div class="kpi-label">Reco validée</div><div class="kpi-date past">08/12/25</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">③ 1re remise</div><div class="kpi-label">Visuels</div><div class="kpi-date past">10/01/26</div></div>
+  <div class="kpi-step step-past" style="flex:.6;"><div class="kpi-num">④ Début</div><div class="kpi-label">Campagne</div><div class="kpi-date past">01/02/26</div></div>
+  <div class="kpi-step step-future" style="flex:.6;"><div class="kpi-num">⑤ Fin</div><div class="kpi-label">Campagne</div><div class="kpi-date future">30/04/26</div></div>
+
+  <div class="kpi-step step-future">
+    <div class="kpi-num">⑥ Facturation</div>
+    <div class="kpi-label">Adring → Client</div>
+    <div class="kpi-date past">31/01/26</div>
+    <div class="kpi-date-sub">Dernière émission · 1 facture</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed">4 200 €</span>
+        <!-- BC révisé = libellé spécifique -->
+        <span class="amount-bc">BC révisé : 11 200 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Payé</div>
+        <!-- Vert : 4 200 émis = 4 200 reçus -->
+        <div class="amount-paid-value paid-ok">4 200 €</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-step step-future">
+    <div class="kpi-num">⑦ Paiement</div>
+    <div class="kpi-label">Client → Adring</div>
+    <div class="kpi-date past">10/02/26</div>
+    <div class="kpi-date-sub">Dernier paiement reçu</div>
+    <div class="kpi-money-row">
+      <div class="kpi-money-left">
+        <span class="amount-billed">4 200 €</span>
+        <span class="amount-bc">BC révisé : 11 200 €</span>
+      </div>
+      <div class="kpi-money-right">
+        <div class="amount-paid-label">Reçu</div>
+        <div class="amount-paid-value paid-ok">4 200 €</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--
+  ═══════════════════════════════════════════════════════════════
+  RÉCAP LOGIQUE POUR LE DEV
+  ═══════════════════════════════════════════════════════════════
+
+  DATE PRINCIPALE (grande) :
+    ⑥ → lastEmittedDate   (date de la dernière facture émise)
+         Si aucune → "En attente"
+    ⑦ → lastPaymentDate   (date du dernier paiement reçu)
+         Si aucun  → "En attente"
+         Si retard → lastDueDate (échéance de la dernière facture non payée)
+
+  SOUS-LABEL :
+    ⑥ → "Dernière émission · N facture(s)"  /  "Aucune facture émise"
+    ⑦ → "Dernier paiement reçu"             /  "Aucun paiement reçu"
+
+  ACCENT (barre haut) :
+    step-past    → tout ce qui a été émis est intégralement réglé
+    step-future  → en cours, pas de retard
+    step-alert   → au moins 1 paiement en retard (échéance passée, montant manquant)
+    step-pending → aucune facture encore
+
+  MONTANT GAUCHE (amount-billed) :
+    → SUM(montants factures émises)   — toujours noir/dblue, neutre
+    → "— €" gris si aucune émission
+
+  MONTANT GAUCHE BAS (amount-bc) :
+    → "BC : X €"          si BC non modifié
+    → "BC révisé : X €"   si avenant détecté (montant BC ≠ montant BC initial)
+
+  MONTANT DROIT — couleur :
+    ⑥ paid-ok   → montant émis réglé intégralement (reçu = émis)
+    ⑥ paid-none → en attente normale (reçu < émis, pas d'échéance dépassée)
+
+    ⑦ paid-ok   → reçu = émis (tout ce qui a été facturé est rentré)
+    ⑦ paid-late → retard : échéance d'au moins une facture dépassée, montant manquant
+    ⑦ paid-none → rien reçu ou en attente normale
+
+  ═══════════════════════════════════════════════════════════════
+-->
+
+</body>
+</html>
