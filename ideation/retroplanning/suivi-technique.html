@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adboard - Suivi technique · DEMO_Campagne_2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --c-green:  #00b299;
+      --c-dgreen: #008f7a;
+      --c-blue:   #455378;
+      --c-dblue:  #0F2A48;
+      --c-orange: #fecf4d;
+      --c-red:    #dd4d4d;
+      --c-gray:   #8A9099;
+      --c-ooh:    #FFCF54;
+      --c-dooh:   #455378;
+      --c-prog:   #5b9bd5;
+      --c-social: #7c5cbf;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: Poppins, sans-serif; background: #f0f2f5; color: var(--c-dblue); margin: 0; font-size: 14px; }
+    a { color: var(--c-green); text-decoration: none; }
+
+    /* NAVBAR */
+    .navbar-wrap { background: white; border-bottom: 1px solid #e8e9eb; position: relative; height: 52px; }
+    .content-maxw-top { position: relative; max-width: 1350px; margin: 0 auto; padding-left: calc(108px + 17px); padding-right: 16px; height: 52px; display: flex; align-items: center; }
+    .navbar-logo { position: absolute; left: 0; top: 0; width: 108px; height: 100%; background: url("https://adboard.fr/_inc/res/adring/color-higher-res.png?v=2") center center no-repeat; background-size: contain; display: block; }
+    .navbar-buttons { list-style: none; margin: 0; padding: 0; display: inline-flex; align-items: center; white-space: nowrap; height: 100%; }
+    .tb-item { position: relative; display: inline-flex; align-items: center; height: 100%; padding: 0 16px; }
+    .tb-item a { color: var(--c-gray); font-size: 13px; display: flex; align-items: center; height: 100%; border-bottom: 2px solid transparent; transition: color 0.2s; }
+    .tb-item:hover a { color: var(--c-dblue); }
+    .tb-item.active a { color: var(--c-dblue); border-bottom-color: var(--c-green); font-weight: 600; }
+    .tb-label.material-icons { font-size: 18px; }
+    .v4-breadcrumb-wrap { position: absolute; bottom: -7px; left: 108px; background: white; z-index: 1; padding: 0 10px; }
+    .d-breadcrumb { float: left; white-space: nowrap; font-size: 11px; opacity: 0.3; transition: opacity 0.5s; padding-bottom: 2px; }
+    .d-breadcrumb:hover { opacity: 1; }
+    .d-breadcrumb-item { display: inline-block; }
+    .d-breadcrumb-item + .d-breadcrumb-item::before { content: ' › '; color: #aaa; margin: 0 3px; }
+    .d-breadcrumb-item.active { font-weight: 600; }
+
+    /* CONTENT */
+    .v4-content { position: relative; padding-top: 32px; color: var(--c-dblue); }
+    .content-maxw { position: relative; max-width: 1450px; margin: 0 auto; }
+    .v4-page-content { padding: 0 32px 48px; }
+
+    /* TITLE */
+    .autowidth2 { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+    .aw-title { overflow: hidden; flex: 1; }
+    .f-title-page { font-size: 22px; font-weight: 700; overflow: hidden; }
+    .title-ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .f-sm.text-pale { font-size: 12px; color: #aaa; padding-bottom: 24px; position: relative; z-index: 1; margin-bottom: -16px; }
+    .id-value.campaign-id { display: inline-block; background: #eef0f3; padding: 1px 7px; border-radius: 3px; font-size: 11px; cursor: pointer; }
+    .campaign-state { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 9px; border-radius: 10px; background: #d2f0eb; color: #0e7060; vertical-align: middle; margin-left: 8px; }
+
+    /* ACTIONS */
+    .rc-top-actions { position: relative; display: inline-block; }
+    .v4-btn-actions { background: white; border: 1px solid #dde0e8; border-radius: 4px; padding: 5px 10px; font-family: inherit; font-size: 13px; cursor: pointer; color: var(--c-dblue); display: inline-flex; align-items: center; gap: 4px; }
+    .v4-btn-actions .material-icons { font-size: 16px; color: var(--c-gray); }
+    .v4-popup-mini { display: none; position: absolute; right: 0; top: calc(100% + 6px); background: white; border-radius: 8px; box-shadow: 0 8px 16px -4px rgba(0,0,0,.25); z-index: 10000; min-width: 230px; padding: 6px 0; overflow: hidden; }
+    .v4-popup-mini.open { display: block; }
+    .pm-item { display: block; color: var(--c-dblue); padding: 6px 16px 6px calc(12px + 1.4em + 8px); font-size: 13px; position: relative; transition: background 0.1s; }
+    .pm-item:hover { background: #f5f7fa; }
+    .pm-item.text-red { color: var(--c-red); padding-bottom: 8px; margin-bottom: 4px; border-bottom: 1px solid #f0f0f0; }
+    .pm-item[data-icon]::before { content: attr(data-icon); font-family: 'Material Icons'; font-size: 15px; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--c-gray); line-height: 1; }
+    .pm-item.text-red[data-icon]::before { color: var(--c-red); }
+
+    /* TABS */
+    .page-tabs { position: relative; box-shadow: 0 1px 0 0 #e8e9eb; font-size: 0; margin-bottom: 24px; margin-top: 28px; }
+    .p-tab { position: relative; display: inline-block; margin-right: 28px; color: var(--c-gray); border-bottom: 2px solid transparent; font-size: 14px; vertical-align: middle; white-space: nowrap; cursor: pointer; transition: color .3s; padding-bottom: 2px; }
+    .p-tab:hover { color: var(--c-dblue); }
+    .p-tab.active { color: var(--c-green); border-bottom-color: var(--c-green); }
+    .p-tab.active .pt-title { font-weight: 600; }
+    .pt-title { display: inline-block; vertical-align: middle; }
+
+    /* V4-BLOCK */
+    .v4-block { position: relative; background: white; border-radius: 15px; box-shadow: 0 1px 4px rgba(0,0,0,.08); margin-bottom: 20px; overflow: hidden; }
+    .vb-header { position: relative; padding: 10px 20px; font-size: 0; background-color: var(--c-green); color: white; display: flex; align-items: center; justify-content: space-between; border-radius: 15px 15px 0 0; }
+    .vh-title { font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 7px; color: white; line-height: 1; }
+    .vh-title .material-icons { font-size: 15px; }
+    .vh-right { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+    .vb-content { position: relative; padding: 16px 20px; }
+
+    /* FILTER PILLS */
+    .filter-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .filter-label { font-size: 11px; color: rgba(255,255,255,.75); font-weight: 500; margin-right: 2px; }
+    .filter-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; cursor: pointer; border: 1.5px solid rgba(255,255,255,.4); background: rgba(255,255,255,.15); color: rgba(255,255,255,.85); transition: all .15s; }
+    .filter-pill:hover { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.7); color: white; }
+    .filter-pill.active { background: white !important; color: var(--c-dblue) !important; border-color: white; font-weight: 600; }
+    .filter-pill .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    /* DATE CHIPS
+       chip-past    : date passée          → vert
+       chip-future  : date à venir         → bleu
+       chip-rv-next : prochaine remise      → jaune (une seule par levier, la plus proche > today)
+       chip-na      : non applicable       → gris
+    */
+    .date-chip { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 3px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+    .date-chip .material-icons { font-size: 11px; }
+    .chip-past    { background: #d2f0eb; color: #0e7060; }
+    .chip-future  { background: #e8ecf3; color: var(--c-blue); }
+    .chip-rv-next { background: #fff3cd; color: #856404; font-weight: 600; }
+    .chip-na      { color: #bbb; font-size: 11px; font-style: italic; }
+
+    /* Doc technique badge */
+    .doc-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 3px; }
+    .doc-badge .material-icons { font-size: 13px; }
+    .doc-ok   { background: #d2f0eb; color: #0e7060; }
+    .doc-none { color: #ccc; font-style: italic; font-size: 11px; }
+
+    /* Specs techniques */
+    .specs-cell { font-size: 11px; color: var(--c-dblue); line-height: 1.5; }
+    .specs-cell .spec-line { display: block; }
+    .specs-cell.specs-empty { color: #bbb; font-style: italic; font-size: 11px; }
+
+    /* TABLE */
+    .retro-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .retro-table thead tr { background: var(--c-dblue); position: sticky; top: 0; z-index: 5; }
+    .retro-table thead th { padding: 9px 12px; color: rgba(255,255,255,.75); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; user-select: none; }
+    .retro-table thead th.sortable { cursor: pointer; }
+    .retro-table thead th.sortable:hover { color: white; background: rgba(255,255,255,.08); }
+    .retro-table thead th .sort-icons { display: inline-flex; flex-direction: column; gap: 0; margin-left: 4px; vertical-align: middle; opacity: .35; }
+    .retro-table thead th .sort-icons .mi { font-size: 10px; line-height: 1; font-family: 'Material Icons'; }
+    .retro-table thead th.asc .sort-icons,
+    .retro-table thead th.desc .sort-icons { opacity: 1; color: var(--c-orange); }
+    .retro-table .tr-group td { background: #f0f2f5 !important; padding: 7px 12px; font-size: 10px; font-weight: 700; color: var(--c-gray); text-transform: uppercase; letter-spacing: .8px; border-bottom: none; }
+    .group-dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
+    .retro-table .tr-supplier td { background: white !important; padding: 8px 12px 3px; border-bottom: none; }
+    .supplier-name { font-weight: 600; font-size: 12px; color: var(--c-dblue); display: flex; align-items: center; gap: 6px; }
+    .supplier-name .material-icons { font-size: 13px; color: var(--c-gray); }
+    .retro-table tbody .tr-data td { padding: 8px 12px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
+    .retro-table tbody .tr-data:hover td { background: #f5faf9; }
+    .mec-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 3px; font-size: 10px; font-weight: 700; background: var(--c-dblue); color: white; flex-shrink: 0; }
+    .levier-cell { display: flex; flex-direction: column; gap: 1px; }
+    .levier-main { font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+    .levier-sub-text { font-size: 10px; color: var(--c-gray); margin-left: 14px; }
+    .type-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; display: inline-block; }
+    .table-scroll { overflow-x: auto; max-height: 1080px; overflow-y: auto; }
+    .small { font-size: 10px; }
+    .text-grayed { color: var(--c-gray); }
+
+    /* Legend */
+    .chips-legend { display: flex; gap: 12px; flex-wrap: wrap; padding: 12px 20px; border-top: 1px solid #f0f0f0; background: #fafbfc; align-items: center; }
+    .cl-item { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--c-gray); }
+    .legend-sep { width: 1px; height: 18px; background: #ddd; margin: 0 4px; }
+
+    /* Note bandeau info */
+    .info-banner { display: flex; align-items: flex-start; gap: 10px; background: #f0f6ff; border: 1px solid #c8dcf5; border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: var(--c-blue); margin-bottom: 16px; line-height: 1.5; }
+    .info-banner .material-icons { font-size: 16px; flex-shrink: 0; margin-top: 1px; color: #5b9bd5; }
+    .info-banner-close { margin-left: auto; flex-shrink: 0; cursor: pointer; color: #a0b4cc; font-size: 16px; line-height: 1; padding: 2px; border-radius: 3px; transition: color .15s; }
+    .info-banner-close:hover { color: var(--c-blue); }
+
+    /* ── Timeline prochaines remises visuels ── */
+    .remise-timeline-wrap {
+      background: white; border-radius: 15px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .remise-timeline-header {
+      padding: 12px 18px 0;
+      display: flex; align-items: center; gap: 7px;
+      font-size: 11px; font-weight: 700; color: var(--c-gray);
+      text-transform: uppercase; letter-spacing: .6px;
+    }
+    .remise-timeline-header .material-icons { font-size: 14px; color: var(--c-green); }
+    .remise-timeline-scroll {
+      display: flex; align-items: stretch; gap: 0;
+      overflow-x: auto; padding: 20px 18px 20px;
+      scrollbar-width: thin; scrollbar-color: #e0e3e8 transparent;
+    }
+    .remise-timeline-scroll::-webkit-scrollbar { height: 4px; }
+    .remise-timeline-scroll::-webkit-scrollbar-thumb { background: #e0e3e8; border-radius: 2px; }
+    .rt-item { display: flex; align-items: center; flex-shrink: 0; }
+    /* Connecteur entre cartes */
+    .rt-item + .rt-item::before {
+      content: ''; display: block;
+      width: 24px; min-width: 24px; height: 1px; background: #dde3ee;
+      flex-shrink: 0; margin: 0 2px; margin-top: -26px;
+    }
+    .rt-card {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+      padding: 14px 18px 16px; border-radius: 12px;
+      border: 1.5px solid #eee;
+      /* Largeur fixe : ~1/5 du conteneur max, avec min et max pour les cas extrêmes */
+      width: clamp(160px, 18vw, 260px);
+      position: relative;
+    }
+    .rt-card.rt-next { border-color: #f0c040; background: #fffdf0; }
+    .rt-card.rt-next::before {
+      content: 'Prochaine'; position: absolute; top: -10px; left: 12px;
+      background: #f0c040; color: #5c4200;
+      font-size: 8.5px; font-weight: 700; padding: 1px 6px; border-radius: 3px;
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .rt-card.rt-upcoming { border-color: #dde3ee; background: white; }
+    .rt-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-bottom: 2px; }
+    .rt-next .rt-dot     { background: #f0c040; box-shadow: 0 0 0 4px #fdf3c0; }
+    .rt-upcoming .rt-dot { background: #c0cade; }
+    .rt-date { font-size: 22px; font-weight: 700; line-height: 1.1; }
+    .rt-next .rt-date     { color: #856404; }
+    .rt-upcoming .rt-date { color: var(--c-blue); font-size: 18px; }
+    .rt-levier {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .4px; color: var(--c-gray);
+    }
+    .rt-levier-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .rt-sub { font-size: 11px; color: #bbb; line-height: 1.4; }
+    .remise-timeline-empty {
+      padding: 14px 18px 18px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--c-gray);
+    }
+    .remise-timeline-empty .material-icons { font-size: 16px; color: var(--c-green); }
+
+    /* Cartes cliquables */
+    .rt-card { cursor: pointer; transition: box-shadow .15s, transform .15s; }
+    .rt-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+    .rt-card.rt-active-card { box-shadow: 0 0 0 2px #f0c040; }
+
+    /* Surbrillance ligne tableau */
+    .tr-data.row-highlighted td {
+      background: #fffbea !important;
+      transition: background .3s;
+    }
+    /* Effet flash au scroll-to */
+    @keyframes rowFlash {
+      0%   { background: #fff3b0; }
+      60%  { background: #fff3b0; }
+      100% { background: #fffbea; }
+    }
+    .tr-data.row-flash td { animation: rowFlash .9s ease forwards; }
+  </style>
+</head>
+<body class="mode-admin">
+
+<!-- NAVBAR -->
+<div class="navbar-wrap">
+  <div class="content-maxw-top">
+    <a class="navbar-logo" href="#"></a>
+    <ul class="d-navbar-buttons navbar-buttons">
+      <li class="tb-item active"><a href="#"><span class="tb-label">Campagnes</span></a></li>
+      <li class="tb-item"><a href="#"><span class="tb-label">Clients</span></a></li>
+      <li class="tb-item"><a href="#"><span class="tb-label">Données</span></a></li>
+      <li class="tb-item"><a href="#"><span class="tb-label">Suivi Business</span></a></li>
+      <li class="tb-item"><a href="#"><span class="tb-label">Suivi Factures Fournisseurs</span></a></li>
+      <li class="tb-item no-right-border"><a href="#"><span class="tb-label material-icons">person</span></a></li>
+    </ul>
+    <div class="v4-breadcrumb-wrap">
+      <div class="d-breadcrumb">
+        <span class="d-breadcrumb-item"><a href="#">Démo Client - Campagnes 2026</a></span>
+        <span class="d-breadcrumb-item active"><a href="#">DEMO_Campagne_2026</a></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE -->
+<div class="v4-content">
+  <div class="v4-page-content">
+    <div class="content-maxw">
+
+      <!-- Title -->
+      <section>
+        <div class="autowidth2">
+          <div class="aw-title f-title-page overflow-hidden">
+            <div class="title-ellipsis">
+              <span>DEMO_Campagne_2026</span>
+              <span class="campaign-state">Active</span>
+            </div>
+          </div>
+          <div class="aw-actions">
+            <div class="rc-top-actions">
+              <button class="v4-btn-actions" onclick="togglePopup()" type="button">
+                <span>Actions</span><i class="material-icons">expand_more</i>
+              </button>
+              <div id="popup-top-actions" class="v4-popup-mini">
+                <a href="#" class="pm-item text-red" data-icon="event_busy">Annuler</a>
+                <a href="#" class="pm-item" data-icon="edit">Modifier</a>
+                <a href="#" class="pm-item" data-icon="cloud_upload">Republier</a>
+                <a href="#" class="pm-item" data-icon="file_upload">Export Excel</a>
+                <a href="#" class="pm-item" data-icon="file_upload">Export Monday</a>
+                <a href="#" class="pm-item" data-icon="file_copy">Documents</a>
+                <a href="#" class="pm-item" data-icon="info">Copier l'info</a>
+                <a href="#" class="pm-item" data-icon="assignment">Fournisseurs et N. TVA régies</a>
+                <a href="#" class="pm-item" data-icon="business">Fiche client</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="f-sm text-pale block" style="position:relative;z-index:1;margin-bottom:-16px;padding-bottom:24px;">
+          <span class="id-value campaign-id"># 9999</span>
+        </div>
+      </section>
+
+      <!-- Tabs - Suivi technique actif -->
+      <div class="page-tabs">
+        <div class="p-tab"><span class="pt-title">Orientations</span></div>
+        <div class="p-tab"><span class="pt-title">Recommandation</span></div>
+        <div class="p-tab active"><span class="pt-title">Suivi technique</span></div>
+        <div class="p-tab"><span class="pt-title">Bilan financier</span></div>
+        <div class="p-tab"><a href="retroplanning-financier.html" style="color:inherit;"><span class="pt-title">Rétroplanning financier</span></a></div>
+        <div class="p-tab"><span class="pt-title">Suivi de performance</span></div>
+        <div class="p-tab"><span class="pt-title">Documents</span></div>
+      </div>
+
+      <!-- Note V1 -->
+      <div class="info-banner" id="info-banner">
+        <i class="material-icons">info</i>
+        <span>
+          <strong>Vue V1 - Suivi technique</strong> · La colonne "Doc technique" indique la présence d'un document dans l'onglet Documents de la campagne. Le lien article par article sera disponible en V2, mais nécessite un développement supplémentaire avec la possibilité d'uploader la doc technique directement depuis le formulaire de création d'article. Les spécificités techniques peuvent être partielles ou absentes selon le levier, notamment en programmatique et digital où il est actuellement impossible de renseigner les specs/formats, une amélioration est également prévue ici. Enfin, les fonctionnalités de tracking de visuels / envoi de rappel au client / etc. seront également développés pour la V2.
+        </span>
+        <i class="material-icons info-banner-close" onclick="document.getElementById('info-banner').style.display='none'" title="Fermer">close</i>
+      </div>
+
+      <!-- ── Timeline prochaines remises à ne pas manquer ──
+           Affiche uniquement les dates > today, triées chronologiquement.
+           La première (la plus proche) est mise en avant en jaune.
+           Les suivantes sont en bleu discret avec scrollable horizontal.
+           Si aucune date future : message vide.
+           Simulation today = 20/03/2026.
+      -->
+      <div class="remise-timeline-wrap">
+        <div class="remise-timeline-header">
+          <i class="material-icons">event</i>
+          Prochaines remises visuels
+        </div>
+
+        <!-- Cas normal : des remises à venir -->
+        <div class="remise-timeline-scroll">
+
+          <!-- Cartes triées par date croissante, uniquement DateRemise > today (20/03/2026).
+               15/03 Prog est exclue car passée.
+               Ordre : 22/03 Social → 25/03 OOH → 28/03 DOOH
+          -->
+
+          <!-- 1 - Prochaine : 22/03/26 · Social / Meta Carrousel -->
+          <div class="rt-item">
+            <div class="rt-card rt-next" data-target-row="row-meta-v2" onclick="highlightRow(this)">
+              <div class="rt-dot"></div>
+              <div class="rt-levier"><span class="rt-levier-dot" style="background:var(--c-social);"></span>Social Ads</div>
+              <div class="rt-date">22/03/26</div>
+              <div class="rt-sub">Meta - Post Carrousel</div>
+            </div>
+          </div>
+
+          <!-- 2 - 25/03/26 · OOH / JCDecaux -->
+          <div class="rt-item">
+            <div class="rt-card rt-upcoming" data-target-row="row-jcdecaux" onclick="highlightRow(this)">
+              <div class="rt-dot"></div>
+              <div class="rt-levier"><span class="rt-levier-dot" style="background:var(--c-ooh);"></span>OOH</div>
+              <div class="rt-date">25/03/26</div>
+              <div class="rt-sub">Abribus 2m² - JCDecaux</div>
+            </div>
+          </div>
+
+          <!-- 3 - 28/03/26 · DOOH / Clear Channel Vague 2 -->
+          <div class="rt-item">
+            <div class="rt-card rt-upcoming" data-target-row="row-dooh-v2" onclick="highlightRow(this)">
+              <div class="rt-dot"></div>
+              <div class="rt-levier"><span class="rt-levier-dot" style="background:var(--c-dooh);"></span>DOOH</div>
+              <div class="rt-date">28/03/26</div>
+              <div class="rt-sub">DOOH IDF Vague 2</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Cas vide (commenter le bloc ci-dessus et décommenter celui-ci pour tester) -->
+        <!--
+        <div class="remise-timeline-empty">
+          <i class="material-icons">check_circle</i>
+          Aucun visuel à remettre prochainement pour cette campagne.
+        </div>
+        -->
+      </div>
+
+      <!-- TABLE SUIVI TECHNIQUE -->
+      <div class="v4-block">
+        <div class="vb-header">
+          <div class="vh-title">
+            <i class="material-icons">build_circle</i>
+            Suivi technique par levier
+          </div>
+          <div class="vh-right">
+            <div class="filter-bar">
+              <span class="filter-label">Levier :</span>
+              <span class="filter-pill active" onclick="filterTable(this,'all')">Tous</span>
+              <span class="filter-pill" onclick="filterTable(this,'ooh')"><span class="pill-dot" style="background:var(--c-ooh);"></span>OOH</span>
+              <span class="filter-pill" onclick="filterTable(this,'dooh')"><span class="pill-dot" style="background:#8ba1d7;"></span>DOOH</span>
+              <span class="filter-pill" onclick="filterTable(this,'radio')"><span class="pill-dot" style="background:#CAA04A;"></span>Radio</span>
+              <span class="filter-pill" onclick="filterTable(this,'prog')"><span class="pill-dot" style="background:var(--c-prog);"></span>Prog.</span>
+              <span class="filter-pill" onclick="filterTable(this,'social')"><span class="pill-dot" style="background:var(--c-social);"></span>Social</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vb-content" style="padding:0;">
+          <div class="table-scroll">
+            <table class="retro-table" id="retro-table">
+              <thead>
+                <tr>
+                  <th style="width:30px;">M</th>
+                  <th>Levier / Format</th>
+                  <th class="sortable" data-col="2" onclick="sortTable(this)">
+                    Date de remise
+                    <span class="sort-icons"><span class="mi">▲</span><span class="mi">▼</span></span>
+                  </th>
+                  <th class="sortable" data-col="3" onclick="sortTable(this)">
+                    Début diffusion
+                    <span class="sort-icons"><span class="mi">▲</span><span class="mi">▼</span></span>
+                  </th>
+                  <th class="sortable" data-col="4" onclick="sortTable(this)">
+                    Fin diffusion
+                    <span class="sort-icons"><span class="mi">▲</span><span class="mi">▼</span></span>
+                  </th>
+                  <th>Doc technique</th>
+                  <th>Spécificités techniques</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+
+                <!-- ══ OOH ══ -->
+                <tr class="tr-group trow" data-levier="ooh" data-group="ooh">
+                  <td colspan="7"><span class="group-dot" style="background:var(--c-ooh);"></span>OOH</td>
+                </tr>
+                <tr class="tr-supplier trow" data-levier="ooh" data-group="ooh" data-supplier="jcdecaux">
+                  <td colspan="7"><div class="supplier-name"><i class="material-icons">business</i>JCDecaux</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="ooh" data-group="ooh" data-supplier="jcdecaux" data-row-id="row-jcdecaux">
+                  <td><span class="mec-badge">A</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-ooh);"></span>Abribus 2m² - Paris intra</div>
+                      <div class="levier-sub-text">740 faces · Sem. 12–16</div>
+                    </div>
+                  </td>
+                  <!-- Prochaine remise OOH → jaune -->
+                  <td data-sort="20260325">
+                    <span class="date-chip chip-rv-next"><i class="material-icons">calendar_today</i>25/03/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260401"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>01/04/26</span></td>
+                  <td data-sort="20260420"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>20/04/26</span></td>
+                  <td><span class="doc-badge doc-ok"><i class="material-icons">check_circle</i>Disponible</span></td>
+                  <td>
+                    <div class="specs-cell">
+                      <span class="spec-line">Format affiche : Abribus 120x176 cm</span>
+                      <span class="spec-line">Format visible : 117x175 cm</span>
+                      <span class="spec-line">740 affiches à livrer</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="tr-supplier trow" data-levier="ooh" data-group="ooh" data-supplier="clearchannel-ooh">
+                  <td colspan="7"><div class="supplier-name"><i class="material-icons">business</i>Clear Channel Outdoor</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="ooh" data-group="ooh" data-supplier="clearchannel-ooh">
+                  <td><span class="mec-badge">B</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-ooh);"></span>4x3 Grandes artères - IDF</div>
+                      <div class="levier-sub-text">320 faces · Sem. 07–13</div>
+                    </div>
+                  </td>
+                  <!-- Remise passée → vert (pas la prochaine) -->
+                  <td data-sort="20260110">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>10/01/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260201"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/02/26</span></td>
+                  <td data-sort="20260327"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>27/03/26</span></td>
+                  <td><span class="doc-badge doc-ok"><i class="material-icons">check_circle</i>Disponible</span></td>
+                  <td>
+                    <div class="specs-cell">
+                      <span class="spec-line">Format : 4x3 (320x240 cm)</span>
+                      <span class="spec-line">Format visible : 315x235 cm</span>
+                      <span class="spec-line">320 affiches à livrer</span>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ══ DOOH ══ -->
+                <tr class="tr-group trow" data-levier="dooh" data-group="dooh">
+                  <td colspan="7"><span class="group-dot" style="background:var(--c-dooh);"></span>DOOH</td>
+                </tr>
+                <tr class="tr-supplier trow" data-levier="dooh" data-group="dooh" data-supplier="clearchannel-dooh">
+                  <td colspan="7"><div class="supplier-name"><i class="material-icons">business</i>Clear Channel Digital</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="dooh" data-group="dooh" data-supplier="clearchannel-dooh">
+                  <td><span class="mec-badge" style="background:var(--c-dooh);">C</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-dooh);"></span>Réseau DOOH IDF - Vague 1</div>
+                      <div class="levier-sub-text">150 écrans · Sem. 05–12</div>
+                    </div>
+                  </td>
+                  <!-- Remise passée → vert -->
+                  <td data-sort="20260120">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>20/01/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260202"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>02/02/26</span></td>
+                  <td data-sort="20260320"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>20/03/26</span></td>
+                  <td><span class="doc-badge doc-ok"><i class="material-icons">check_circle</i>Disponible</span></td>
+                  <td>
+                    <div class="specs-cell">
+                      <span class="spec-line">Format : 1080x1920 px (portrait)</span>
+                      <span class="spec-line">Durée spot : 10 sec</span>
+                      <span class="spec-line">Type : spots dynamiques</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="tr-data trow" data-levier="dooh" data-group="dooh" data-supplier="clearchannel-dooh" data-row-id="row-dooh-v2">
+                  <td><span class="mec-badge" style="background:var(--c-dooh);">C</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-dooh);"></span>Réseau DOOH IDF - Vague 2</div>
+                      <div class="levier-sub-text">150 écrans · Sem. 13–17</div>
+                    </div>
+                  </td>
+                  <!-- Prochaine remise DOOH → jaune -->
+                  <td data-sort="20260328">
+                    <span class="date-chip chip-rv-next"><i class="material-icons">calendar_today</i>28/03/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260406"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>06/04/26</span></td>
+                  <td data-sort="20260426"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>26/04/26</span></td>
+                  <td><span class="doc-none">-</span></td>
+                  <td>
+                    <div class="specs-cell">
+                      <span class="spec-line">Format : 1080x1920 px (portrait)</span>
+                      <span class="spec-line">Durée spot : 10 sec</span>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ══ RADIO ══ -->
+                <tr class="tr-group trow" data-levier="radio" data-group="radio">
+                  <td colspan="7"><span class="group-dot" style="background:#CAA04A;"></span>Radio</td>
+                </tr>
+                <tr class="tr-supplier trow" data-levier="radio" data-group="radio" data-supplier="nrj">
+                  <td colspan="7"><div class="supplier-name"><i class="material-icons">business</i>NRJ Group</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="radio" data-group="radio" data-supplier="nrj">
+                  <td><span class="mec-badge" style="background:#CAA04A;">D</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:#CAA04A;"></span>Spot 30s - NRJ + Chérie FM</div>
+                      <div class="levier-sub-text">3 semaines · IDF</div>
+                    </div>
+                  </td>
+                  <!-- Toutes passées pour Radio → vert -->
+                  <td data-sort="20260301">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/03/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise texte enregistrement</div>
+                  </td>
+                  <td data-sort="20260316"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>16/03/26</span></td>
+                  <td data-sort="20260406"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>06/04/26</span></td>
+                  <td><span class="doc-badge doc-ok"><i class="material-icons">check_circle</i>Disponible</span></td>
+                  <td>
+                    <div class="specs-cell">
+                      <span class="spec-line">Durée spot : 30 sec</span>
+                      <span class="spec-line">Format fichier : MP3 192 kbps</span>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- ══ PROGRAMMATIQUE ══ -->
+                <tr class="tr-group trow" data-levier="prog" data-group="prog">
+                  <td colspan="7"><span class="group-dot" style="background:var(--c-prog);"></span>Programmatique</td>
+                </tr>
+                <tr class="tr-supplier trow" data-levier="prog" data-group="prog" data-supplier="trading">
+                  <td colspan="7"><div class="supplier-name"><i class="material-icons">business</i>Trading Media Premium</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="prog" data-group="prog" data-supplier="trading">
+                  <td><span class="mec-badge" style="background:var(--c-prog);">E</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-prog);"></span>Display bannières - Vague 1</div>
+                      <div class="levier-sub-text">Déc–Jan · IDF</div>
+                    </div>
+                  </td>
+                  <!-- Passée → vert -->
+                  <td data-sort="20260102">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>02/01/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260107"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>07/01/26</span></td>
+                  <td data-sort="20260214"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>14/02/26</span></td>
+                  <td><span class="doc-none">-</span></td>
+                  <td><div class="specs-cell specs-empty">Non renseignées</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="prog" data-group="prog" data-supplier="trading" data-row-id="row-prog-v2">
+                  <td><span class="mec-badge" style="background:var(--c-prog);">E</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-prog);"></span>Display bannières - Vague 2</div>
+                      <div class="levier-sub-text">Fév–Avr · IDF</div>
+                    </div>
+                  </td>
+                  <!-- 15/03 passée → chip-past (today = 20/03) -->
+                  <td data-sort="20260315">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/03/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260301"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>01/03/26</span></td>
+                  <td data-sort="20260430"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>30/04/26</span></td>
+                  <td><span class="doc-none">-</span></td>
+                  <td><div class="specs-cell specs-empty">Non renseignées</div></td>
+                </tr>
+
+                <!-- ══ SOCIAL ADS ══ -->
+                <tr class="tr-group trow" data-levier="social" data-group="social">
+                  <td colspan="7"><span class="group-dot" style="background:var(--c-social);"></span>Social Ads</td>
+                </tr>
+                <tr class="tr-supplier trow" data-levier="social" data-group="social" data-supplier="meta">
+                  <td colspan="7"><div class="supplier-name"><i class="material-icons">business</i>Meta Platforms Ireland</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="social" data-group="social" data-supplier="meta">
+                  <td><span class="mec-badge" style="background:var(--c-social);">F</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-social);"></span>Meta - Vidéo Reels + Story</div>
+                      <div class="levier-sub-text">25–49 ans CSP+ · Vague 1</div>
+                    </div>
+                  </td>
+                  <!-- Passée → vert -->
+                  <td data-sort="20260205">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>05/02/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260215"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/02/26</span></td>
+                  <td data-sort="20260415"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>15/04/26</span></td>
+                  <td><span class="doc-none">-</span></td>
+                  <td><div class="specs-cell specs-empty">Non renseignées</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="social" data-group="social" data-supplier="meta" data-row-id="row-meta-v2">
+                  <td><span class="mec-badge" style="background:var(--c-social);">F</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-social);"></span>Meta - Post Carrousel</div>
+                      <div class="levier-sub-text">25–49 ans CSP+ · Vague 2</div>
+                    </div>
+                  </td>
+                  <!-- Prochaine remise Social → jaune -->
+                  <td data-sort="20260322">
+                    <span class="date-chip chip-rv-next"><i class="material-icons">calendar_today</i>22/03/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260401"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>01/04/26</span></td>
+                  <td data-sort="20260430"><span class="date-chip chip-future"><i class="material-icons">calendar_today</i>30/04/26</span></td>
+                  <td><span class="doc-none">-</span></td>
+                  <td><div class="specs-cell specs-empty">Non renseignées</div></td>
+                </tr>
+                <tr class="tr-supplier trow" data-levier="social" data-group="social" data-supplier="tiktok">
+                  <td colspan="7"><div class="supplier-name"><i class="material-icons">business</i>TikTok Information Technologies</div></td>
+                </tr>
+                <tr class="tr-data trow" data-levier="social" data-group="social" data-supplier="tiktok">
+                  <td><span class="mec-badge" style="background:var(--c-social);">G</span></td>
+                  <td>
+                    <div class="levier-cell">
+                      <div class="levier-main"><span class="type-dot" style="background:var(--c-social);"></span>TikTok - TopView 15s</div>
+                      <div class="levier-sub-text">18–35 ans · Jan</div>
+                    </div>
+                  </td>
+                  <!-- Passée → vert (TikTok pas de remise future) -->
+                  <td data-sort="20260105">
+                    <span class="date-chip chip-past"><i class="material-icons">check_circle</i>05/01/26</span>
+                    <div class="small text-grayed" style="margin-top:2px;">Remise visuel</div>
+                  </td>
+                  <td data-sort="20260115"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/01/26</span></td>
+                  <td data-sort="20260215"><span class="date-chip chip-past"><i class="material-icons">check_circle</i>15/02/26</span></td>
+                  <td><span class="doc-none">-</span></td>
+                  <td><div class="specs-cell specs-empty">Non renseignées</div></td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Légende - technique uniquement -->
+          <div class="chips-legend">
+            <div class="cl-item">
+              <span class="date-chip chip-past" style="font-size:10px;padding:1px 6px;"><i class="material-icons" style="font-size:10px;">check_circle</i>jj/mm</span>
+              Date passée
+            </div>
+            <div class="cl-item">
+              <span class="date-chip chip-future" style="font-size:10px;padding:1px 6px;"><i class="material-icons" style="font-size:10px;">calendar_today</i>jj/mm</span>
+              Date à venir
+            </div>
+            <div class="cl-item">
+              <span class="date-chip chip-rv-next" style="font-size:10px;padding:1px 6px;"><i class="material-icons" style="font-size:10px;">calendar_today</i>jj/mm</span>
+              Prochaine remise visuel du levier
+            </div>
+            <div class="legend-sep"></div>
+            <div class="cl-item">
+              <span class="doc-badge doc-ok" style="font-size:10px;padding:1px 6px;"><i class="material-icons" style="font-size:10px;">check_circle</i>Disponible</span>
+              Doc technique présente
+            </div>
+            <div class="cl-item">
+              <span class="doc-none">-</span>
+              Doc technique absente
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function togglePopup() {
+    document.getElementById('popup-top-actions').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.rc-top-actions'))
+      document.getElementById('popup-top-actions').classList.remove('open');
+  });
+
+  /*
+   * highlightRow(card)
+   * ─────────────────────────────────────────────────────────────
+   * Comportement :
+   *   1. Récupère data-target-row sur la carte cliquée
+   *   2. Retire la surbrillance de toutes les lignes
+   *   3. Retire l'état actif de toutes les cartes
+   *   4. Active la carte cliquée (.rt-active-card)
+   *   5. Trouve la ligne cible dans le tableau
+   *   6. Scroll jusqu'à la ligne (smooth)
+   *   7. Applique l'animation flash puis maintient la surbrillance
+   *
+   * Note dev :
+   *   - Le lien carte → ligne se fait via data-target-row / data-row-id
+   *   - Ces IDs sont générés côté serveur par article (ex: "row-{article.id}")
+   *   - Si la ligne est masquée par le filtre levier, on active d'abord "Tous"
+   *     avant de scroller (voir commentaire dans le code)
+   * ─────────────────────────────────────────────────────────────
+   */
+  function highlightRow(card) {
+    const targetId = card.getAttribute('data-target-row');
+    if (!targetId) return;
+
+    // 1. Reset toutes les cartes
+    document.querySelectorAll('.rt-card').forEach(c => c.classList.remove('rt-active-card'));
+    card.classList.add('rt-active-card');
+
+    // 2. Reset toutes les lignes
+    document.querySelectorAll('.tr-data').forEach(r => {
+      r.classList.remove('row-highlighted', 'row-flash');
+    });
+
+    // 3. Trouver la ligne cible
+    const targetRow = document.querySelector(`[data-row-id="${targetId}"]`);
+    if (!targetRow) return;
+
+    // 4. Si la ligne est masquée par le filtre actif → basculer sur "Tous"
+    if (targetRow.style.display === 'none') {
+      const allPill = document.querySelector('.filter-pill[onclick*="\'all\'"]');
+      if (allPill) filterTable(allPill, 'all');
+    }
+
+    // 5. Scroll smooth vers la ligne
+    targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // 6. Appliquer le flash puis maintenir surbrillance
+    targetRow.classList.add('row-flash', 'row-highlighted');
+    // Retirer row-flash après l'animation (900ms) mais garder row-highlighted
+    setTimeout(() => targetRow.classList.remove('row-flash'), 950);
+  }
+  function filterTable(pill, levier) {
+    pill.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    document.querySelectorAll('#retro-table .trow').forEach(row => {
+      const rl = row.getAttribute('data-levier');
+      row.style.display = (levier === 'all' || rl === levier) ? '' : 'none';
+    });
+  }
+  let currentCol = null, currentDir = 'asc';
+  function sortTable(th) {
+    const col = th.getAttribute('data-col');
+    currentDir = (currentCol === col) ? (currentDir === 'asc' ? 'desc' : 'asc') : 'asc';
+    currentCol = col;
+    document.querySelectorAll('.retro-table thead th').forEach(t => t.classList.remove('asc','desc'));
+    th.classList.add(currentDir);
+    const tbody = document.getElementById('table-body');
+    const groups = [...new Set([...tbody.querySelectorAll('tr[data-group]')].map(r => r.getAttribute('data-group')))];
+    groups.forEach(groupId => {
+      const groupRow = tbody.querySelector(`.tr-group[data-group="${groupId}"]`);
+      if (!groupRow) return;
+      const allGroupRows = [...tbody.querySelectorAll(`tr[data-group="${groupId}"]`)];
+      const blocks = [];
+      let currentBlock = null;
+      allGroupRows.forEach(row => {
+        if (row.classList.contains('tr-group')) return;
+        if (row.classList.contains('tr-supplier')) { currentBlock = { supplierRow: row, dataRows: [] }; blocks.push(currentBlock); }
+        else if (row.classList.contains('tr-data') && currentBlock) currentBlock.dataRows.push(row);
+      });
+      blocks.forEach(block => {
+        block.dataRows.sort((a, b) => {
+          const av = getSortVal(a, col), bv = getSortVal(b, col);
+          return currentDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+        });
+      });
+      blocks.sort((a, b) => {
+        const av = a.dataRows.length ? getSortVal(a.dataRows[0], col) : '99999999';
+        const bv = b.dataRows.length ? getSortVal(b.dataRows[0], col) : '99999999';
+        return currentDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+      });
+      let insertAfter = groupRow;
+      blocks.forEach(block => {
+        insertAfter.after(block.supplierRow); insertAfter = block.supplierRow;
+        block.dataRows.forEach(dr => { insertAfter.after(dr); insertAfter = dr; });
+      });
+    });
+  }
+  function getSortVal(row, col) {
+    const cells = row.querySelectorAll('td');
+    const cell = cells[parseInt(col) - 1];
+    return cell ? (cell.getAttribute('data-sort') || '99999999') : '99999999';
+  }
+</script>
+</body>
+</html>
